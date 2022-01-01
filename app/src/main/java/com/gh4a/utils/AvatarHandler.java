@@ -1,8 +1,5 @@
 package com.gh4a.utils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -15,18 +12,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
-import androidx.collection.LongSparseArray;
-import androidx.collection.LruCache;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -35,6 +24,16 @@ import android.widget.ImageView;
 import com.gh4a.ServiceFactory;
 import com.meisolsson.githubsdk.model.User;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.LongSparseArray;
+import androidx.collection.LruCache;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import okhttp3.OkHttpClient;
 
 public class AvatarHandler {
@@ -192,12 +191,7 @@ public class AvatarHandler {
 
             @Override
             protected int sizeOf(Long key, Bitmap value) {
-                final long sizeInBytes;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    sizeInBytes = value.getAllocationByteCount();
-                } else {
-                    sizeInBytes = value.getRowBytes() * value.getHeight();
-                }
+                final long sizeInBytes = value.getAllocationByteCount();
                 return (int) (sizeInBytes / 1024);
             }
         };

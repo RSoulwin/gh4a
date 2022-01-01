@@ -19,11 +19,9 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.print.PrintAttributes;
@@ -41,6 +39,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.gh4a.BaseActivity;
+import com.gh4a.BuildConfig;
 import com.gh4a.R;
 import com.gh4a.fragment.SettingsFragment;
 import com.gh4a.utils.FileUtils;
@@ -107,10 +106,8 @@ public abstract class WebViewerActivity extends BaseActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-                WebView.setWebContentsDebuggingEnabled(true);
-            }
+        if (BuildConfig.DEBUG) {
+            WebView.setWebContentsDebuggingEnabled(true);
         }
 
         setContentView(R.layout.web_viewer);
@@ -177,8 +174,7 @@ public abstract class WebViewerActivity extends BaseActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mHasData) {
             menu.removeItem(R.id.browser);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && mHasData) {
+        } else {
             getMenuInflater().inflate(R.menu.print_menu, menu);
             if (mPrintWebView != null) {
                 menu.findItem(R.id.print).setEnabled(false);
@@ -236,7 +232,6 @@ public abstract class WebViewerActivity extends BaseActivity implements
     }
 
     @SuppressLint("AddJavascriptInterface")
-    @TargetApi(19)
     private void doPrint() {
         if (handlePrintRequest()) {
             return;
@@ -260,7 +255,6 @@ public abstract class WebViewerActivity extends BaseActivity implements
         supportInvalidateOptionsMenu();
     }
 
-    @TargetApi(19)
     private void doPrintHtml() {
         if (!isFinishing()) {
             final String title = getDocumentTitle();
@@ -272,14 +266,8 @@ public abstract class WebViewerActivity extends BaseActivity implements
         supportInvalidateOptionsMenu();
     }
 
-    @SuppressWarnings("deprecation")
-    @TargetApi(19)
     private PrintDocumentAdapter getPrintAdapterForWebView(WebView webView, String title) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return webView.createPrintDocumentAdapter(title);
-        } else {
-            return webView.createPrintDocumentAdapter();
-        }
+        return webView.createPrintDocumentAdapter(title);
     }
 
     @Override
