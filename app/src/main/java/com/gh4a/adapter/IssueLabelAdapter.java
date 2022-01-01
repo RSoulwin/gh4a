@@ -121,8 +121,7 @@ public class IssueLabelAdapter extends
             }
         });
 
-        Typeface labelTf = TypefaceCache.getTypeface(holder.label.getTypefaceValue());
-        holder.editor.setTypeface(labelTf);
+        holder.editor.setTypeface(holder.label.getTypeface());
 
         ViewGroup colors = v.findViewById(R.id.colors);
         int count = colors.getChildCount();

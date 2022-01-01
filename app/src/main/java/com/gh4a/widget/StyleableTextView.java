@@ -61,10 +61,6 @@ public class StyleableTextView extends AppCompatTextView {
         initAttributes(context, attrs, defStyle);
     }
 
-    public int getTypefaceValue() {
-        return mTypefaceValue;
-    }
-
     private void initAttributes(Context context, AttributeSet attrs, int defStyle) {
         Resources.Theme theme = context.getTheme();
         boolean needsLinkHandling = false;
