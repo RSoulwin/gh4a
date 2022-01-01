@@ -105,12 +105,10 @@ class EventViewHolder
             mEventIconView.setVisibility(View.GONE);
         }
 
-        mMessageView.setText(formatEvent(item.event, user,
-                mMessageView.getTypefaceValue(), mIsPullRequest));
+        mMessageView.setText(formatEvent(item.event, user, mIsPullRequest));
     }
 
-    private CharSequence formatEvent(final IssueEvent event, final User user, int typefaceValue,
-            boolean isPullRequestEvent) {
+    private CharSequence formatEvent(final IssueEvent event, final User user, boolean isPullRequestEvent) {
         String textBase = null;
         int textResId = 0;
 
@@ -249,7 +247,7 @@ class EventViewHolder
         if (textBase == null) {
             textBase = mContext.getString(textResId, getUserLoginWithBotSuffix(user));
         }
-        SpannableStringBuilder text = StringUtils.applyBoldTags(textBase, typefaceValue);
+        SpannableStringBuilder text = StringUtils.applyBoldTags(textBase);
 
         int pos = text.toString().indexOf("[commit]");
         if (event.commitId() != null && pos >= 0) {
