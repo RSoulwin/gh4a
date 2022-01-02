@@ -2,7 +2,6 @@ package com.gh4a.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.Nullable;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import com.gh4a.ColorPickerDialog;
 import com.gh4a.R;
-import com.gh4a.utils.TypefaceCache;
 import com.gh4a.utils.UiUtils;
 import com.gh4a.widget.StyleableTextView;
 import com.meisolsson.githubsdk.model.Label;
