@@ -9,7 +9,7 @@ import com.meisolsson.githubsdk.model.IssueState;
 
 public class IssueStateTrackingFloatingActionButton extends FloatingActionButton {
     private IssueState mState;
-    private boolean mMerged;
+    private boolean mMergedOrCompleted;
     private boolean mDraft;
 
     private static final int[] STATE_CLOSED = { R.attr.state_closed };
@@ -34,7 +34,12 @@ public class IssueStateTrackingFloatingActionButton extends FloatingActionButton
     }
 
     public void setMerged(boolean merged) {
-        mMerged = merged;
+        mMergedOrCompleted = merged;
+        refreshDrawableState();
+    }
+
+    public void setCompleted(boolean completed) {
+        mMergedOrCompleted = completed;
         refreshDrawableState();
     }
 
@@ -46,7 +51,7 @@ public class IssueStateTrackingFloatingActionButton extends FloatingActionButton
     @Override
     public int[] onCreateDrawableState(int extraSpace) {
         final int[] drawableState = super.onCreateDrawableState(extraSpace + 2);
-        if (mMerged) {
+        if (mMergedOrCompleted) {
             mergeDrawableStates(drawableState, STATE_MERGED);
         } else if (mState == IssueState.Closed) {
             mergeDrawableStates(drawableState, STATE_CLOSED);

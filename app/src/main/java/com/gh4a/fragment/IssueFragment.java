@@ -16,6 +16,7 @@ import com.gh4a.utils.RxUtils;
 import com.meisolsson.githubsdk.model.GitHubCommentBase;
 import com.meisolsson.githubsdk.model.Issue;
 import com.meisolsson.githubsdk.model.IssueState;
+import com.meisolsson.githubsdk.model.IssueStateReason;
 import com.meisolsson.githubsdk.service.issues.IssueCommentService;
 import com.meisolsson.githubsdk.service.issues.IssueEventService;
 import com.meisolsson.githubsdk.service.issues.IssueTimelineService;
@@ -55,7 +56,9 @@ public class IssueFragment extends IssueFragmentBase {
 
     @Override
     protected void assignHighlightColor() {
-        if (mIssue.state() == IssueState.Closed) {
+        if (mIssue.state() == IssueState.Closed && mIssue.stateReason() == IssueStateReason.Completed) {
+            setHighlightColors(R.attr.colorIssueClosedCompleted, R.attr.colorIssueClosedCompletedDark);
+        } else if (mIssue.state() == IssueState.Closed) {
             setHighlightColors(R.attr.colorIssueClosed, R.attr.colorIssueClosedDark);
         } else {
             setHighlightColors(R.attr.colorIssueOpen, R.attr.colorIssueOpenDark);

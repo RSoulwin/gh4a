@@ -58,6 +58,7 @@ import com.gh4a.widget.BottomSheetCompatibleScrollingViewBehavior;
 import com.gh4a.widget.IssueStateTrackingFloatingActionButton;
 import com.meisolsson.githubsdk.model.Issue;
 import com.meisolsson.githubsdk.model.IssueState;
+import com.meisolsson.githubsdk.model.IssueStateReason;
 import com.meisolsson.githubsdk.model.request.issue.IssueRequest;
 import com.meisolsson.githubsdk.service.issues.IssueService;
 
@@ -181,11 +182,21 @@ public class IssueActivity extends BaseActivity implements
         TextView tvState = mHeader.findViewById(R.id.tv_state);
         boolean closed = mIssue.state() == IssueState.Closed;
         int stateTextResId = closed ? R.string.closed : R.string.open;
-        int stateColorAttributeId = closed ? R.attr.colorIssueClosed : R.attr.colorIssueOpen;
-
         tvState.setText(getString(stateTextResId).toUpperCase(Locale.getDefault()));
-        transitionHeaderToColor(stateColorAttributeId,
-                closed ? R.attr.colorIssueClosedDark : R.attr.colorIssueOpenDark);
+
+        int stateColorAttributeId;
+        int stateColorDarkAttributeId;
+        if (closed && mIssue.stateReason() == IssueStateReason.Completed) {
+            stateColorAttributeId = R.attr.colorIssueClosedCompleted;
+            stateColorDarkAttributeId = R.attr.colorIssueClosedCompletedDark;
+        } else if (closed) {
+            stateColorAttributeId = R.attr.colorIssueClosed;
+            stateColorDarkAttributeId = R.attr.colorIssueClosedDark;
+        } else {
+            stateColorAttributeId = R.attr.colorIssueOpen;
+            stateColorDarkAttributeId = R.attr.colorIssueOpenDark;
+        }
+        transitionHeaderToColor(stateColorAttributeId, stateColorDarkAttributeId);
 
         TextView tvTitle = mHeader.findViewById(R.id.tv_title);
         tvTitle.setText(mIssue.title());
@@ -356,6 +367,7 @@ public class IssueActivity extends BaseActivity implements
         }
         if (mEditFab != null) {
             mEditFab.setState(mIssue.state());
+            mEditFab.setCompleted(mIssue.stateReason() == IssueStateReason.Completed);
         }
     }
 

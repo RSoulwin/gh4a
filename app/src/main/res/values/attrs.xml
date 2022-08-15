@@ -6,10 +6,12 @@
     <attr name="drawerBackground" format="reference" />
     <attr name="colorIssueOpen" format="color" />
     <attr name="colorIssueClosed" format="color" />
+    <attr name="colorIssueClosedCompleted" format="color" />
     <attr name="colorPullRequestMerged" format="color" />
     <attr name="colorPullRequestDraft" format="color" />
     <attr name="colorIssueOpenDark" format="color" />
     <attr name="colorIssueClosedDark" format="color" />
+    <attr name="colorIssueClosedCompletedDark" format="color" />
     <attr name="colorPullRequestMergedDark" format="color" />
     <attr name="colorPullRequestDraftDark" format="color" />
     <attr name="colorIssueEditFab" format="reference" />
