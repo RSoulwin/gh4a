@@ -26,16 +26,17 @@ public class IssueListFactory extends FragmentFactory {
     private final boolean mIsPullRequest;
     private final IssueListFragment.SortDrawerHelper mDrawerHelper =
             new IssueListFragment.SortDrawerHelper();
+    private final SharedPreferences mPrefs;
     private int[] mHeaderColorAttrs;
-    private SharedPreferences mPrefs;
 
     public IssueListFactory(HomeActivity activity, String userLogin, boolean pr,
             SharedPreferences prefs) {
         super(activity);
         mLogin = userLogin;
-        mShowingClosed = false;
         mIsPullRequest = pr;
         mPrefs = prefs;
+        mShowingClosed = false;
+        mHeaderColorAttrs = new int[] { R.attr.colorIssueOpen, R.attr.colorIssueOpenDark };
 
         String lastOrder = mPrefs.getString(getSortOrderPrefKey(), null);
         String lastDir = mPrefs.getString(getSortDirPrefKey(), null);
@@ -82,7 +83,7 @@ public class IssueListFactory extends FragmentFactory {
 
         return IssueListFragment.newInstance(query,
                 mDrawerHelper.getSortMode(), mDrawerHelper.getSortOrder(),
-                mShowingClosed ? ApiHelpers.IssueState.CLOSED : ApiHelpers.IssueState.OPEN,
+                getHeaderColorAttrs(),
                 mIsPullRequest ? R.string.no_pull_requests_found : R.string.no_issues_found,
                 true);
     }

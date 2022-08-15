@@ -114,15 +114,20 @@ public class IssueListActivity extends BaseFragmentPagerActivity implements
     private static final String LIST_QUERY = "is:%s %s repo:%s/%s %s %s %s %s";
     private static final String SEARCH_QUERY = "is:%s %s repo:%s/%s %s";
 
-    private static final int[] TITLES = new int[] {
+    private static final int[] ISSUE_TITLES = new int[] {
         R.string.open, R.string.closed
+    };
+
+    private static final int[][] ISSUE_HEADER_COLOR_ATTRS = new int[][] {
+        { R.attr.colorIssueOpen, R.attr.colorIssueOpenDark },
+        { R.attr.colorIssueClosedCompleted, R.attr.colorIssueClosedCompletedDark }
     };
 
     private static final int[] PULL_REQUEST_TITLES = new int[] {
         R.string.open, R.string.closed, R.string.merged
     };
 
-    private static final int[][] HEADER_COLOR_ATTRS = new int[][] {
+    private static final int[][] PULL_REQUEST_HEADER_COLOR_ATTRS = new int[][] {
         { R.attr.colorIssueOpen, R.attr.colorIssueOpenDark },
         { R.attr.colorIssueClosed, R.attr.colorIssueClosedDark },
         { R.attr.colorPullRequestMerged, R.attr.colorPullRequestMergedDark }
@@ -220,7 +225,7 @@ public class IssueListActivity extends BaseFragmentPagerActivity implements
 
     @Override
     protected int[] getTabTitleResIds() {
-        return mIsPullRequest ? PULL_REQUEST_TITLES : TITLES;
+        return mIsPullRequest ? PULL_REQUEST_TITLES : ISSUE_TITLES;
     }
 
     @Override
@@ -243,7 +248,7 @@ public class IssueListActivity extends BaseFragmentPagerActivity implements
 
     @Override
     protected int[][] getTabHeaderColorAttrs() {
-        return HEADER_COLOR_ATTRS;
+        return mIsPullRequest ? PULL_REQUEST_HEADER_COLOR_ATTRS : ISSUE_HEADER_COLOR_ATTRS;
     }
 
     @Override
@@ -271,7 +276,7 @@ public class IssueListActivity extends BaseFragmentPagerActivity implements
 
         return IssueListFragment.newInstance(query,
                 mSortHelper.getSortMode(), mSortHelper.getSortOrder(),
-                getIssueState(position), emptyTextResId, false);
+                getTabHeaderColorAttrs()[position], emptyTextResId, false);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class IssueListFragment extends PagedDataBaseFragment<Issue> {
     private String mOrder;
     private int mEmptyTextResId;
     private boolean mShowRepository;
-    private String mIssueState;
+    private int[] mHighlightColorAttrs;
 
     private final ActivityResultLauncher<Intent> mIssueLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -59,7 +59,7 @@ public class IssueListFragment extends PagedDataBaseFragment<Issue> {
     );
 
     public static IssueListFragment newInstance(String query, String sortMode, String order,
-            String state, int emptyTextResId, boolean showRepository) {
+            int[] highlightColorAttrs, int emptyTextResId, boolean showRepository) {
         IssueListFragment f = new IssueListFragment();
 
         Bundle args = new Bundle();
@@ -67,7 +67,7 @@ public class IssueListFragment extends PagedDataBaseFragment<Issue> {
         args.putString("sortmode", sortMode);
         args.putString("order", order);
         args.putInt("emptytext", emptyTextResId);
-        args.putString("state", state);
+        args.putIntArray("highlightcolors", highlightColorAttrs);
         args.putBoolean("withrepo", showRepository);
 
         f.setArguments(args);
@@ -83,26 +83,14 @@ public class IssueListFragment extends PagedDataBaseFragment<Issue> {
         mSortMode = args.getString("sortmode");
         mOrder = args.getString("order");
         mEmptyTextResId = args.getInt("emptytext");
-        mIssueState = args.getString("state");
+        mHighlightColorAttrs = args.getIntArray("highlightcolors");
         mShowRepository = args.getBoolean("withrepo");
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        switch (mIssueState) {
-            case ApiHelpers.IssueState.CLOSED:
-                setHighlightColors(R.attr.colorIssueClosed, R.attr.colorIssueClosedDark);
-                break;
-            case ApiHelpers.IssueState.MERGED:
-                setHighlightColors(R.attr.colorPullRequestMerged,
-                        R.attr.colorPullRequestMergedDark);
-                break;
-            default:
-                setHighlightColors(R.attr.colorIssueOpen, R.attr.colorIssueOpenDark);
-                break;
-        }
+        setHighlightColors(mHighlightColorAttrs[0], mHighlightColorAttrs[1]);
     }
 
     @Override
