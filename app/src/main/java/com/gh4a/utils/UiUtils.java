@@ -72,6 +72,10 @@ public class UiUtils {
         return ContextCompat.getColor(context, R.color.label_fg_light);
     }
 
+    public static int dpToPixels(Context context, int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
+    }
+
     public static void updateViewVisibility(View view, boolean animate, boolean show) {
         int visibility = show ? View.VISIBLE : View.GONE;
         if (view.getVisibility() == visibility) {

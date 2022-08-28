@@ -329,9 +329,7 @@ public class HttpImageGetter {
     private final OkHttpClient mClient;
 
     private final Context mContext;
-
     private final int mMaxWidth;
-    private final int mMaxHeight;
 
     private boolean mDestroyed;
 
@@ -342,8 +340,7 @@ public class HttpImageGetter {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         final Point size = new Point();
         wm.getDefaultDisplay().getSize(size);
-        mMaxWidth = size.x;
-        mMaxHeight = size.y;
+        mMaxWidth = size.x - UiUtils.dpToPixels(context, 48);  // take horizontal padding into account
 
         mGifPlaceholderDrawable = ContextCompat.getDrawable(context, R.drawable.image_gif_placeholder);
         mGifPlaceholderDrawable.setBounds(0, 0,
@@ -517,7 +514,7 @@ public class HttpImageGetter {
         BitmapFactory.decodeByteArray(image, 0, image.length, options);
 
         int scale = 1;
-        while (options.outWidth >= mMaxWidth || options.outHeight >= mMaxHeight) {
+        while (options.outWidth > mMaxWidth) {
             options.outWidth /= 2;
             options.outHeight /= 2;
             scale *= 2;
@@ -538,32 +535,25 @@ public class HttpImageGetter {
                 int docWidth = (int) (svg.getDocumentWidth() * density);
                 int docHeight = (int) (svg.getDocumentHeight() * density);
                 if (docWidth < 0 || docHeight < 0) {
+                    // The image doesn't have a specified width or height, so we try to determine
+                    // its aspect ratio to render it with correct proportions
                     float aspectRatio = svg.getDocumentAspectRatio();
                     if (aspectRatio > 0) {
-                        float heightForAspect = (float) mMaxWidth / aspectRatio;
-                        float widthForAspect = (float) mMaxHeight * aspectRatio;
-                        if (widthForAspect < heightForAspect) {
-                            docWidth = Math.round(widthForAspect);
-                            docHeight = mMaxHeight;
-                        } else {
-                            docWidth = mMaxWidth;
-                            docHeight = Math.round(heightForAspect);
-                        }
+                        // we make it smaller than maxWidth so that it doesn't take too much screen space
+                        docWidth = Math.round(mMaxWidth * 0.7f);
+                        docHeight = Math.round((float) docWidth / aspectRatio);
                     } else {
-                        docWidth = mMaxWidth;
-                        docHeight = mMaxHeight;
+                        docWidth = docHeight = Math.round(mMaxWidth * 0.7f);
                     }
 
                     // we didn't take density into account anymore when calculating docWidth
                     // and docHeight, so don't scale with it and just let the renderer
                     // figure out the scaling
                     density = null;
-                }
-
-                while (docWidth >= mMaxWidth || docHeight >= mMaxHeight) {
-                    docWidth /= 2;
-                    docHeight /= 2;
-                    if (density != null) {
+                } else {
+                    while (docWidth > mMaxWidth) {
+                        docWidth /= 2;
+                        docHeight /= 2;
                         density /= 2;
                     }
                 }
