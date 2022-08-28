@@ -534,7 +534,6 @@ public class HttpImageGetter {
         try {
             SVG svg = SVG.getFromInputStream(is);
             if (svg != null) {
-                svg.setRenderDPI(DisplayMetrics.DENSITY_DEFAULT);
                 Float density = res.getDisplayMetrics().density;
                 int docWidth = (int) (svg.getDocumentWidth() * density);
                 int docHeight = (int) (svg.getDocumentHeight() * density);
