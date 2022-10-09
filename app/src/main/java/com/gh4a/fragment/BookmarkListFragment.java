@@ -3,7 +3,7 @@ package com.gh4a.fragment;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
+
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -107,7 +107,9 @@ public class BookmarkListFragment extends LoadingListFragmentBase implements
 
         public BookmarkDragHelperCallback(BaseActivity baseActivity, BookmarkAdapter adapter) {
             super(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
-                    ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+                  // disable left swipe to avoid accidentally removing a bookmark when
+                  // moving to the Stars tab in the "Bookmarks and Stars" screen
+                  ItemTouchHelper.RIGHT);
             mBaseActivity = baseActivity;
             mAdapter = adapter;
         }

@@ -125,6 +125,7 @@
     <string name="start_page_last_selected">Last selected</string>
     <string name="comment_editor_locked_hint">Comments are only available to collaborators</string>
     <string name="user_type_bot">Bot</string>
+    <string name="user_type_mannequin">Mannequin</string>
     <string name="user_type_org">Organization</string>
     <string name="clear_suggestions">Clear suggestions</string>
     <string name="quote">Quote</string>
@@ -285,8 +286,10 @@
     <string name="repo_activity">Activity</string>
 
     <!-- Issue events -->
-    <string name="issue_event_closed">[b]%1$s[/b] closed this issue [time]</string>
-    <string name="issue_event_closed_with_commit">[b]%1$s[/b] closed this issue in [commit] [time]</string>
+    <string name="issue_event_closed_completed">[b]%1$s[/b] closed this issue as completed [time]</string>
+    <string name="issue_event_closed_completed_with_commit">[b]%1$s[/b] closed this issue as completed in [commit] [time]</string>
+    <string name="issue_event_closed_not_planned">[b]%1$s[/b] closed this issue as not planned [time]</string>
+    <string name="issue_event_closed_not_planned_with_commit">[b]%1$s[/b] closed this issue as not planned in [commit] [time]</string>
     <string name="issue_event_reopened">[b]%1$s[/b] reopened this issue [time]</string>
     <string name="issue_event_referenced">[b]%1$s[/b] referenced this issue [time]</string>
     <string name="issue_event_referenced_with_commit">[b]%1$s[/b] referenced this issue in commit [commit] [time]</string>
@@ -300,6 +303,7 @@
     <string name="issue_event_demilestoned">[b]%1$s[/b] removed this from the [b]%2$s[/b] milestone [time]</string>
     <string name="issue_event_renamed">[b]%1$s[/b] changed the title from [b]%2$s[/b] to [b]%3$s[/b] [time]</string>
     <string name="issue_event_locked">[b]%1$s[/b] locked and limited conversation to collaborators [time]</string>
+    <string name="issue_event_locked_with_reason">[b]%1$s[/b] locked as [b]%2$s[/b] and limited conversation to collaborators [time]</string>
     <string name="issue_event_unlocked">[b]%1$s[/b] unlocked this conversation [time]</string>
     <string name="issue_event_mentioned">[b]%1$s[/b] mentioned this issue in [b][source][/b] [time]</string>
 
