@@ -24,7 +24,6 @@
     <color name="pr_draft_button">#98a4b3</color>
 
     <color name="fab">#89f05c</color>
-    <color name="fab_pressed">#5aa03d</color>
 
     <color name="tab_indicator_color">#fff</color>
     <color name="drawer_scrim">#60000000</color>
@@ -51,4 +50,6 @@
     <color name="breadcrumb_background">#7baa67</color>
 
     <color name="octodroid">#97C03E</color>
+    <!-- Equal to primary, but not overridden in night mode -->
+    <color name="launcher_bg">#65b345</color>
 </resources>

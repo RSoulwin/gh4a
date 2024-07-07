@@ -242,9 +242,10 @@ public class NotificationsWorker extends Worker {
                 R.plurals.unread_notifications_summary_text,
                 notifications.size(), notifications.size());
 
-        Intent intent = NotificationHandlingService.makeOpenNotificationActionIntent(
-                context, repository.owner().login(), repository.name());
-        PendingIntent contentIntent = PendingIntent.getService(context, id, intent,
+        Intent intent = HomeActivity.makeNotificationsIntent(
+                context, repository.owner().login(), repository.name())
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, id, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         PendingIntent deleteIntent = PendingIntent.getService(context, id,
@@ -323,9 +324,11 @@ public class NotificationsWorker extends Worker {
                 .build();
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-                HomeActivity.makeIntent(context, R.id.notifications), 0);
+                HomeActivity.makeIntent(context, R.id.notifications),
+                PendingIntent.FLAG_IMMUTABLE);
         PendingIntent deleteIntent = PendingIntent.getService(context, 0,
-                NotificationHandlingService.makeMarkNotificationsSeenIntent(context), 0);
+                NotificationHandlingService.makeMarkNotificationsSeenIntent(context),
+                PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = makeBaseBuilder()
                 .setGroup(GROUP_ID_GITHUB)
                 .setGroupSummary(true)
