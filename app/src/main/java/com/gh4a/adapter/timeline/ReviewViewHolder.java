@@ -221,6 +221,8 @@ class ReviewViewHolder
                 textResId = R.string.pull_request_event_review_requested_changes;
                 break;
             case Dismissed:
+                textResId = R.string.pull_request_event_review_previously_reviewed;
+                break;
             case Commented:
             default:
                 textResId = R.string.pull_request_event_review_reviewed;
@@ -232,8 +234,7 @@ class ReviewViewHolder
 
         String login = ApiHelpers.getUserLogin(mContext, review.user());
         String textBase = mContext.getString(textResId, login);
-        SpannableStringBuilder text = StringUtils.applyBoldTags(textBase,
-                mMessageView.getTypefaceValue());
+        SpannableStringBuilder text = StringUtils.applyBoldTags(textBase);
 
         CharSequence time = review.submittedAt() != null
                 ? StringUtils.formatRelativeTime(mContext, review.submittedAt(), true) : "";

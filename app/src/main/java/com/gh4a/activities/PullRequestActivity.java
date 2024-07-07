@@ -22,23 +22,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-
-import com.gh4a.utils.ActivityResultHelpers;
-import com.gh4a.utils.UiUtils;
-import com.google.android.material.appbar.AppBarLayout;
-
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AlertDialog;
-
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,16 +39,18 @@ import com.gh4a.R;
 import com.gh4a.ServiceFactory;
 import com.gh4a.fragment.CommitCompareFragment;
 import com.gh4a.fragment.ConfirmationDialogFragment;
-import com.gh4a.fragment.PullRequestFilesFragment;
 import com.gh4a.fragment.PullRequestConversationFragment;
+import com.gh4a.fragment.PullRequestFilesFragment;
+import com.gh4a.utils.ActivityResultHelpers;
 import com.gh4a.utils.ApiHelpers;
 import com.gh4a.utils.IntentUtils;
 import com.gh4a.utils.RxUtils;
 import com.gh4a.utils.SingleFactory;
 import com.gh4a.utils.Triplet;
+import com.gh4a.utils.UiUtils;
 import com.gh4a.widget.BottomSheetCompatibleScrollingViewBehavior;
 import com.gh4a.widget.IssueStateTrackingFloatingActionButton;
-
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.textfield.TextInputLayout;
 import com.meisolsson.githubsdk.model.Issue;
 import com.meisolsson.githubsdk.model.IssueState;
@@ -82,6 +67,16 @@ import com.meisolsson.githubsdk.service.pull_request.PullRequestService;
 
 import java.util.Locale;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
@@ -202,17 +197,20 @@ public class PullRequestActivity extends BaseFragmentPagerActivity implements
         if (!canClose || isClosed) {
             menu.removeItem(R.id.pull_close);
         }
-        if (!canOpen || !isClosed) {
+        if (!canOpen || !isClosed || mPullRequest.merged()) {
             menu.removeItem(R.id.pull_reopen);
-        } else if (isClosed && mPullRequest.merged()) {
-            menu.findItem(R.id.pull_reopen).setEnabled(false);
         }
-        if (!canMerge) {
+
+        if (!canMerge || isClosed) {
             menu.removeItem(R.id.pull_merge);
-        } else if (mPullRequest.merged()
-                || mPullRequest.mergeable() == null || !mPullRequest.mergeable()) {
-            MenuItem mergeItem = menu.findItem(R.id.pull_merge);
-            mergeItem.setEnabled(false);
+        } else {
+            // Mergeability is checked according to the information found here: https://github.com/octokit/octokit.net/issues/1763
+            boolean isMergeable = mPullRequest.mergeableState() == PullRequest.MergeableState.Clean ||
+                    mPullRequest.mergeableState() == PullRequest.MergeableState.Unstable;
+            if (!isMergeable) {
+                MenuItem mergeItem = menu.findItem(R.id.pull_merge);
+                mergeItem.setEnabled(false);
+            }
         }
 
         if (mPullRequest == null) {
@@ -637,25 +635,11 @@ public class PullRequestActivity extends BaseFragmentPagerActivity implements
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     MergeMethodDesc selectedItem = (MergeMethodDesc) parent.getItemAtPosition(position);
                     toggleFieldsVisibility(selectedItem.action);
-                    setCommitTitleHint(selectedItem.action);
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> adapterView) {
                 }
             });
-        }
-
-        private void setCommitTitleHint(MergeRequest.Method mergeMethod) {
-            switch (mergeMethod) {
-                case Merge:
-                    String username = ApiHelpers.getUserLogin(getContext(), mPr.head().user());
-                    mTitleField.setPlaceholderText(
-                            "Merge pull request #" + mPr.number() + " from " + username + "/" + mPr.head().ref());
-                    break;
-                case Squash:
-                    mTitleField.setPlaceholderText(mPr.title() + " (#" + mPr.number() + ")");
-                    break;
-            }
         }
 
         private void toggleFieldsVisibility(MergeRequest.Method mergeMethod) {

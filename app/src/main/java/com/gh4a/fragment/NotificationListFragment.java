@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.gh4a.R;
 import com.gh4a.ServiceFactory;
@@ -128,20 +129,21 @@ public class NotificationListFragment extends LoadingListFragmentBase implements
 
     @Override
     public void onItemClick(NotificationHolder item) {
-        final Intent intent;
-
         if (item.notification == null) {
-            intent = RepositoryActivity.makeIntent(getActivity(), item.repository);
+            var intent = RepositoryActivity.makeIntent(getActivity(), item.repository);
+            startActivity(intent);
+            return;
+        }
+
+        NotificationSubject subject = item.notification.subject();
+        String url = subject.url();
+        final Intent intent;
+        if (url != null) {
+            Uri uri = ApiHelpers.normalizeUri(Uri.parse(url));
+            intent = BrowseFilter.makeRedirectionIntent(getActivity(), uri,
+                    new IntentUtils.InitialCommentMarker(item.notification.updatedAt()));
         } else {
-            NotificationSubject subject = item.notification.subject();
-            String url = subject.url();
-            if (url != null) {
-                Uri uri = ApiHelpers.normalizeUri(Uri.parse(url));
-                intent = BrowseFilter.makeRedirectionIntent(getActivity(), uri,
-                        new IntentUtils.InitialCommentMarker(item.notification.updatedAt()));
-            } else {
-                intent = null;
-            }
+            intent = null;
         }
 
         if (intent != null) {
@@ -205,7 +207,7 @@ public class NotificationListFragment extends LoadingListFragmentBase implements
         service.setNotificationThreadSubscription(notification.id(), request)
                 .map(ApiHelpers::throwOnFailure)
                 .compose(RxUtils::doInBackground)
-                .subscribe(result -> handleMarkAsRead(null, notification),
+                .subscribe(result -> Toast.makeText(getContext(), R.string.unsubscribe_success, Toast.LENGTH_SHORT).show(),
                         error -> handleActionFailure("Unsubscribing notification failed", error));
     }
 
@@ -255,6 +257,9 @@ public class NotificationListFragment extends LoadingListFragmentBase implements
         NotificationService service = ServiceFactory.get(NotificationService.class, false);
         final Single<Response<Void>> responseSingle;
         if (notification != null) {
+            if (!notification.unread()) {
+                return;
+            }
             responseSingle = service.markNotificationRead(notification.id());
         } else {
             NotificationReadRequest request = NotificationReadRequest.builder()

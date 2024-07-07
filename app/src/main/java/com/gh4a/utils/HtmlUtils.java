@@ -429,8 +429,10 @@ public class HtmlUtils {
                     mSpannableStringBuilder.setSpan(span, mSpannableStringBuilder.length() - 2,
                             mSpannableStringBuilder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
-            } else if (tag.equalsIgnoreCase("div")) {
+            } else if (tag.equalsIgnoreCase("div") || tag.equalsIgnoreCase("details")) {
                 startBlockElement(attributes);
+            } else if (tag.equalsIgnoreCase("summary")) {
+                startBlockElement(attributes, 1);
             } else if (tag.equalsIgnoreCase("span")) {
                 startCssStyle(attributes);
             } else if (tag.equalsIgnoreCase("hr")) {
@@ -463,6 +465,7 @@ public class HtmlUtils {
             } else if (tag.equalsIgnoreCase("samp")) {
                 start(new Monospace());
             } else if (tag.equalsIgnoreCase("pre")) {
+                startBlockElement(attributes, 1);
                 start(new Pre());
             } else if (tag.equalsIgnoreCase("a")) {
                 startA(attributes);
@@ -517,7 +520,9 @@ public class HtmlUtils {
                 end(List.class);
             } else if (tag.equalsIgnoreCase("li")) {
                 endLi();
-            } else if (tag.equalsIgnoreCase("div")) {
+            } else if (tag.equalsIgnoreCase("div") ||
+                       tag.equalsIgnoreCase("details") ||
+                       tag.equalsIgnoreCase("summary")) {
                 endBlockElement();
             } else if (tag.equalsIgnoreCase("span")) {
                 endCssStyle();
@@ -544,7 +549,7 @@ public class HtmlUtils {
             } else if (tag.equalsIgnoreCase("samp")) {
                 end(Monospace.class, new TypefaceSpan("monospace"));
             } else if (tag.equalsIgnoreCase("pre")) {
-                appendNewlines(1);
+                endBlockElement();
                 end(Pre.class, new TypefaceSpan("monospace"), new CodeBlockSpan(mCodeBlockBackgroundColor));
             } else if (tag.equalsIgnoreCase("a")) {
                 endA();

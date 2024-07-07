@@ -84,7 +84,7 @@ class EventViewHolder
             mEventIconView.setVisibility(View.GONE);
         }
 
-        mMessageView.setText(formatEvent(item.event, user, mMessageView.getTypefaceValue()));
+        mMessageView.setText(formatEvent(item.event, user));
     }
 
     private Integer getEventIcon(IssueEvent event) {
@@ -108,7 +108,9 @@ class EventViewHolder
             case Demilestoned:
                 return R.drawable.issue_event_milestone;
             case Renamed: return R.drawable.issue_event_renamed;
-            case CommentDeleted: return R.drawable.timeline_event_comment_deleted;
+            case CommentDeleted:
+            case ReviewDismissed:
+                return R.drawable.timeline_event_dismissed_deleted;
             case HeadRefDeleted:
             case HeadRefRestored:
             case HeadRefForcePushed:
@@ -123,23 +125,25 @@ class EventViewHolder
         return null;
     }
 
-    private CharSequence formatEvent(final IssueEvent event, final User user, int typefaceValue) {
+    private CharSequence formatEvent(final IssueEvent event, final User user) {
         String textBase = null;
         int textResId = 0;
+        String commitId = event.commitId();
+        String commitUrl = event.commitUrl();
 
         switch (event.event()) {
             case Closed:
                 if (mIsPullRequest) {
-                    textResId = event.commitId() != null
+                    textResId = commitId != null
                             ? R.string.pull_request_event_closed_with_commit
                             : R.string.pull_request_event_closed;
                 } else {
                     if (event.stateReason() == IssueStateReason.NotPlanned) {
-                        textResId = event.commitId() != null
+                        textResId = commitId != null
                                 ? R.string.issue_event_closed_not_planned_with_commit
                                 : R.string.issue_event_closed_not_planned;
                     } else {
-                        textResId = event.commitId() != null
+                        textResId = commitId != null
                                 ? R.string.issue_event_closed_completed_with_commit
                                 : R.string.issue_event_closed_completed;
                     }
@@ -151,17 +155,17 @@ class EventViewHolder
                         : R.string.issue_event_reopened;
                 break;
             case Merged:
-                textResId = event.commitId() != null
+                textResId = commitId != null
                         ? R.string.pull_request_event_merged_with_commit
                         : R.string.pull_request_event_merged;
                 break;
             case Referenced:
                 if (mIsPullRequest) {
-                    textResId = event.commitId() != null
+                    textResId = commitId != null
                             ? R.string.pull_request_event_referenced_with_commit
                             : R.string.pull_request_event_referenced;
                 } else {
-                    textResId = event.commitId() != null
+                    textResId = commitId != null
                             ? R.string.issue_event_referenced_with_commit
                             : R.string.issue_event_referenced;
                 }
@@ -248,6 +252,16 @@ class EventViewHolder
                 }
                 break;
             }
+            case ReviewDismissed:
+                String dismissalCommitId = event.dismissedReview().dismissalCommitId();
+                if (dismissalCommitId != null) {
+                    commitId = dismissalCommitId;
+                    commitUrl = null;
+                    textResId = R.string.pull_request_event_review_dismissed_via_commit;
+                } else {
+                    textResId = R.string.pull_request_event_review_dismissed;
+                }
+                break;
             case HeadRefDeleted:
                 textResId = R.string.pull_request_event_ref_deleted;
                 break;
@@ -279,8 +293,8 @@ class EventViewHolder
             textBase = mContext.getString(textResId, getUserLoginWithBotSuffix(user));
         }
 
-        SpannableStringBuilder text = StringUtils.applyBoldTags(textBase, typefaceValue);
-        replaceCommitPlaceholder(text, event.commitId(), event.commitUrl());
+        SpannableStringBuilder text = StringUtils.applyBoldTags(textBase);
+        replaceCommitPlaceholder(text, commitId, commitUrl);
         replaceLabelPlaceholder(text, event.label());
         replaceBotPlaceholder(text);
         replaceSourcePlaceholder(text, event.source());
