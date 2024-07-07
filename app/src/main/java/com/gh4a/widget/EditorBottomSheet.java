@@ -367,6 +367,13 @@ public class EditorBottomSheet extends FrameLayout implements View.OnClickListen
         return mBasicEditor.getText();
     }
 
+    public Editable getText() {
+        if (isInAdvancedMode()) {
+            return mAdvancedEditor.getText();
+        }
+        return mBasicEditor.getText();
+    }
+
     private void setAdvancedEditorVisible(boolean visible) {
         mAdvancedEditorContainer.setVisibility(visible ? View.VISIBLE : View.GONE);
         mBasicEditorScrollView.setVisibility(visible ? View.GONE : View.VISIBLE);
@@ -382,7 +389,7 @@ public class EditorBottomSheet extends FrameLayout implements View.OnClickListen
             mBasicEditor.setSelection(mBasicEditor.getText().length());
         }
 
-        mAdvancedEditorToggle.setImageResource(visible ? R.drawable.collapse : R.drawable.expand);
+        mAdvancedEditorToggle.setRotationX(visible ? 0f : 180f);
         updateSendButtonState();
 
         if (mListener != null) {
